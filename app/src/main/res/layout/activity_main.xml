@@ -5,26 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="sam.van.roy.ocr_app.MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="4">
 
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:srcCompat="@drawable/test_image3"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+        tools:layout_editor_absoluteY="0dp"
+        android:layout_weight="2"/>
 
     <Button
         android:id="@+id/button1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Run OCR" />
+        android:layout_height="0dp"
+        android:text="Take Picture"
+        android:layout_weight="0.5"/>
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="Run OCR"
+        android:layout_weight="0.5"/>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="OCR TEXT will appear here" />
+        android:layout_height="0dp"
+        android:text="OCR TEXT will appear here"
+        android:layout_weight="1"/>
 
 </android.widget.LinearLayout>
