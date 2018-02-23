@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
         mImageView = findViewById(R.id.imageView1);
 
-
         Glide
                 .with(getApplicationContext())
                 .asBitmap()
@@ -71,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
                         image = resource;
                     }
                 });
-
         Glide
                 .with(this)
                 .asBitmap()
@@ -118,10 +116,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setPic() {
+        assignBitmapWithGlide(mCurrentPhotoPath);
+        Glide.with(this).asBitmap().load(mCurrentPhotoPath).into(mImageView);
+        //image = BitmapFactory.decodeFile(mCurrentPhotoPath);
+//        Bitmap rotatedBitmap = ExifUtil.rotateBitmap(mCurrentPhotoPath, image);
+//        mImageView.setImageBitmap(rotatedBitmap);
+    }
+
+    private void assignBitmapWithGlide(String location) {
         Glide
                 .with(getApplicationContext())
                 .asBitmap()
-                .load(mCurrentPhotoPath)
+                .load(location)
                 .into(new SimpleTarget<Bitmap>(700,700) {
 
                     @Override
@@ -129,10 +135,6 @@ public class MainActivity extends AppCompatActivity {
                         image = resource;
                     }
                 });
-        Glide.with(this).asBitmap().load(mCurrentPhotoPath).into(mImageView);
-        //image = BitmapFactory.decodeFile(mCurrentPhotoPath);
-//        Bitmap rotatedBitmap = ExifUtil.rotateBitmap(mCurrentPhotoPath, image);
-//        mImageView.setImageBitmap(rotatedBitmap);
     }
 
     private void copyFiles() {
