@@ -30,5 +30,5 @@ dependencies {
     compile 'com.rmtheis:tess-two:8.0.0'
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
-    compile 'com.theartofdev.edmodo:android-image-cropper:2.6.+'
+    compile 'com.theartofdev.edmodo:android-image-cropper:1.2.1'
 }
