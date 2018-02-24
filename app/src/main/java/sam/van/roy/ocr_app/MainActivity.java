@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -107,6 +109,18 @@ public class MainActivity extends AppCompatActivity {
                 processImage(view);
             }
         });
+
+//        final DragRectView view = (DragRectView) findViewById(R.id.dragRect);
+//
+//        if (null != view) {
+//            view.setOnUpCallback(new DragRectView.OnUpCallback() {
+//                @Override
+//                public void onRectFinished(final Rect rect) {
+//                    Toast.makeText(getApplicationContext(), "Rect is (" + rect.left + ", " + rect.top + ", " + rect.right + ", " + rect.bottom + ")",
+//                            Toast.LENGTH_LONG).show();
+//                }
+//            });
+//        }
 
     }
 
