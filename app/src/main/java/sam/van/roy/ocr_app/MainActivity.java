@@ -26,6 +26,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.system.ErrnoException;
 import android.util.Log;
 import android.view.View;
@@ -73,30 +74,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //mImageView = findViewById(R.id.imageView1);
-
-//        Glide
-//                .with(getApplicationContext())
-//                .asBitmap()
-//                .load(R.drawable.test_gsm_image)
-//                .into(new SimpleTarget<Bitmap>(700,700) {
-//
-//                    @Override
-//                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-//                        image = resource;
-//                    }
-//                });
-//        Glide
-//                .with(this)
-//                .asBitmap()
-//                .load(R.drawable.test_gsm_image)
-//                .into(mImageView);
-
-
-
-
-//        image = BitmapFactory.decodeResource(getResources(), R.drawable.test_gsm_image);
-
         datapath = getFilesDir()+ "/tesseract/";
 
         //make sure training data has been copied
@@ -129,6 +106,12 @@ public class MainActivity extends AppCompatActivity {
 //                        .start(MainActivity.this);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpToolbar();
     }
 
     /**
@@ -402,6 +385,11 @@ public class MainActivity extends AppCompatActivity {
                         image = resource;
                     }
                 });
+    }
+
+    public void setUpToolbar(){
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.appToolbar);
+        setSupportActionBar(myToolbar);
     }
 
 
