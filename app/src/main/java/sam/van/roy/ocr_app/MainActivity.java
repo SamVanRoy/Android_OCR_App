@@ -28,10 +28,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.system.ErrnoException;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,10 +64,11 @@ public class MainActivity extends AppCompatActivity {
     String mCurrentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
 
-    Button button;
-    Button button2;
+    Button ocrBtn;
 
     private CropImageView mCropImageView;
+
+    private TextView ocrResultTextView;
 
     private Uri mCropImageUri;
 
@@ -87,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
         //Todo
         mCropImageView = (CropImageView) findViewById(R.id.CropImageView);
 
+        ocrResultTextView = findViewById(R.id.ocrResultTextView);
+        ocrResultTextView.setMovementMethod(new ScrollingMovementMethod());
+
 
 //        button = findViewById(R.id.button1);
 //        button.setOnClickListener(new View.OnClickListener() {
@@ -96,11 +102,18 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        button2 = findViewById(R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener() {
+        ocrBtn = findViewById(R.id.ocr_btn);
+        ocrBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 processImage(view);
+                LinearLayout.LayoutParams loparams = (LinearLayout.LayoutParams) ocrResultTextView.getLayoutParams();
+                loparams.weight = 2;
+                ocrResultTextView.setLayoutParams(loparams);
+
+                LinearLayout.LayoutParams loparams2 = (LinearLayout.LayoutParams) mCropImageView.getLayoutParams();
+                loparams2.weight = 1;
+                mCropImageView.setLayoutParams(loparams2);
 //                mCurrentPhotoUri = Uri.parse(mCurrentPhotoPath);
 //                CropImage.activity(mCurrentPhotoUri)
 //                        .start(MainActivity.this);
@@ -129,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
         if (cropped != null)
             mCropImageView.setImageBitmap(cropped);
         image = cropped;
-
     }
 
     @Override
@@ -368,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
         String OCRresult = null;
         mTess.setImage(image);
         OCRresult = mTess.getUTF8Text();
-        TextView OCRTextView = (TextView) findViewById(R.id.textView);
+        TextView OCRTextView = (TextView) findViewById(R.id.ocrResultTextView);
         OCRTextView.setText(OCRresult);
     }
 

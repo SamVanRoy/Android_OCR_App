@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">OCR_App</string>
+    <string name="ocr_result_text">OCR TEXT will appear here</string>
+    <string name="load_btn_txt">Load Image</string>
+    <string name="crop_btn_txt">Crop Image</string>
+    <string name="ocr_btn_txt">Run OCR</string>
 </resources>

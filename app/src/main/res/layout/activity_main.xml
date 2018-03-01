@@ -24,47 +24,65 @@
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
+        android:id="@+id/ocr_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="4"
-        android:layout_below="@+id/appToolbarLayout">
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:text="Load Image"
-            android:onClick="onLoadImageClick"
-            android:layout_weight="0.5"/>
+        android:weightSum="3"
+        android:layout_below="@+id/appToolbarLayout"
+        >
 
         <com.theartofdev.edmodo.cropper.CropImageView
             android:id="@+id/CropImageView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.5"
+            android:layout_weight="2"
             />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:text="Crop Image"
-            android:onClick="onCropImageClick"
-            android:layout_weight="0.5"/>
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:text="Run OCR"
-            android:layout_weight="0.5"/>
-
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/ocrResultTextView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:text="OCR TEXT will appear here"
-            android:layout_weight="1"/>
+            android:text="@string/ocr_result_text"
+            android:layout_weight="1"
+            android:maxLines = "500"
+            android:scrollbars = "vertical"/>
+
+        <LinearLayout
+            android:id="@+id/button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/load_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="@string/load_btn_txt"
+                android:onClick="onLoadImageClick"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/crop_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="@string/crop_btn_txt"
+                android:onClick="onCropImageClick"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/ocr_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="@string/ocr_btn_txt"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
     </LinearLayout>
+
+
 
 
 </RelativeLayout>
