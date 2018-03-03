@@ -9,27 +9,23 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.graphics.drawable.GradientDrawable;
-import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.system.ErrnoException;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,10 +33,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -54,13 +46,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     Bitmap image; //our image
     private TessBaseAPI mTess; //Tess API reference
     String datapath = ""; //path to folder containing language data file
-    ImageView mImageView;
+
     String mCurrentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
 
@@ -71,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView ocrResultTextView;
 
     private Uri mCropImageUri;
+
+    private ShareActionProvider mShareActionProvider;
+    private String OCRresultText = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,15 +88,6 @@ public class MainActivity extends AppCompatActivity {
         ocrResultTextView = findViewById(R.id.ocrResultTextView);
         ocrResultTextView.setMovementMethod(new ScrollingMovementMethod());
 
-
-//        button = findViewById(R.id.button1);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                dispatchTakePictureIntent();
-//            }
-//        });
-
         ocrBtn = findViewById(R.id.ocr_btn);
         ocrBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,11 +100,38 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams loparams2 = (LinearLayout.LayoutParams) mCropImageView.getLayoutParams();
                 loparams2.weight = 1;
                 mCropImageView.setLayoutParams(loparams2);
-//                mCurrentPhotoUri = Uri.parse(mCurrentPhotoPath);
-//                CropImage.activity(mCurrentPhotoUri)
-//                        .start(MainActivity.this);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate menu resource file.
+        getMenuInflater().inflate(R.menu.toolbar_options, menu);
+
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, OCRresultText);
+        shareIntent.setType("text/plain");
+
+        setShareIntent(shareIntent);
+
+        // Return true to display menu
+        return true;
+    }
+
+    // Call to update the share intent
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
     }
 
     @Override
@@ -283,12 +296,12 @@ public class MainActivity extends AppCompatActivity {
 //        setPictureInPlace();
 //    }
 
-    private void setPictureInPlace() {
-        //is dit nodig?
-        assignBitmapWithGlide(mCurrentPhotoPath);
-
-        Glide.with(this).asBitmap().load(mCurrentPhotoPath).into(mImageView);
-    }
+//    private void setPictureInPlace() {
+//        //is dit nodig?
+//        assignBitmapWithGlide(mCurrentPhotoPath);
+//
+//        Glide.with(this).asBitmap().load(mCurrentPhotoPath).into(mImageView);
+//    }
 
 
     private File createImageFile() throws IOException {
@@ -307,27 +320,27 @@ public class MainActivity extends AppCompatActivity {
         return image;
     }
 
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "sam.van.roy.fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
+//    private void dispatchTakePictureIntent() {
+//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        // Ensure that there's a camera activity to handle the intent
+//        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+//            // Create the File where the photo should go
+//            File photoFile = null;
+//            try {
+//                photoFile = createImageFile();
+//            } catch (IOException ex) {
+//                // Error occurred while creating the File
+//            }
+//            // Continue only if the File was successfully created
+//            if (photoFile != null) {
+//                Uri photoURI = FileProvider.getUriForFile(this,
+//                        "sam.van.roy.fileprovider",
+//                        photoFile);
+//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+//            }
+//        }
+//    }
 
     //Tesseract
     private void copyFilesTrainedData() {
@@ -377,27 +390,26 @@ public class MainActivity extends AppCompatActivity {
 
     //Tesseract
     public void processImage(View view){
-        String OCRresult = null;
         mTess.setImage(image);
-        OCRresult = mTess.getUTF8Text();
+        OCRresultText = mTess.getUTF8Text();
         TextView OCRTextView = (TextView) findViewById(R.id.ocrResultTextView);
-        OCRTextView.setText(OCRresult);
+        OCRTextView.setText(OCRresultText);
     }
 
     //utilityMethod with Glide
-    private void assignBitmapWithGlide(String location) {
-        Glide
-                .with(getApplicationContext())
-                .asBitmap()
-                .load(location)
-                .into(new SimpleTarget<Bitmap>(700,700) {
-
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        image = resource;
-                    }
-                });
-    }
+//    private void assignBitmapWithGlide(String location) {
+//        Glide
+//                .with(getApplicationContext())
+//                .asBitmap()
+//                .load(location)
+//                .into(new SimpleTarget<Bitmap>(700,700) {
+//
+//                    @Override
+//                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+//                        image = resource;
+//                    }
+//                });
+//    }
 
     public void setUpToolbar(){
         Toolbar myToolbar = (Toolbar) findViewById(R.id.appToolbar);
