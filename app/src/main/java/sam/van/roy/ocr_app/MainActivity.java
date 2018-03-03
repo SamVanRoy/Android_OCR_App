@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ShareActionProvider mShareActionProvider;
     private String OCRresultText = null;
-
+    private String ocrLanguage = "eng";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +75,10 @@ public class MainActivity extends AppCompatActivity {
         datapath = getFilesDir()+ "/tesseract/";
 
         //make sure training data has been copied
-        checkFile(new File(datapath + "tessdata/"));
+        checkFile(new File(datapath + "tessdata/"), ocrLanguage);
 
-        //initialize Tesseract API
-        String lang = "eng";
-        mTess = new TessBaseAPI();
-        mTess.init(datapath, lang);
+        initTesseractApi(ocrLanguage);
+
 
         //Todo
         mCropImageView = (CropImageView) findViewById(R.id.CropImageView);
@@ -102,6 +100,13 @@ public class MainActivity extends AppCompatActivity {
                 mCropImageView.setLayoutParams(loparams2);
             }
         });
+    }
+
+    private void initTesseractApi(String language) {
+        //initialize Tesseract API
+//        String lang = "eng";
+        mTess = new TessBaseAPI();
+        mTess.init(datapath, language);
     }
 
     @Override
@@ -343,16 +348,16 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     //Tesseract
-    private void copyFilesTrainedData() {
+    private void copyFilesTrainedData(String language) {
         try {
             //location we want the file to be at
-            String filepath = datapath + "/tessdata/eng.traineddata";
+            String filepath = datapath + "/tessdata/" + language + ".traineddata";
 
             //get access to AssetManager
             AssetManager assetManager = getAssets();
 
             //open byte streams for reading/writing
-            InputStream instream = assetManager.open("tessdata/eng.traineddata");
+            InputStream instream = assetManager.open("tessdata/nld.traineddata");
             OutputStream outstream = new FileOutputStream(filepath);
 
             //copy the file to the location specified by filepath
@@ -373,17 +378,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Tesseract
-    private void checkFile(File dir) {
+    private void checkFile(File dir, String language) {
         //directory does not exist, but we can successfully create it
         if (!dir.exists()&& dir.mkdirs()){
-            copyFilesTrainedData();
+            copyFilesTrainedData(language);
         }
         //The directory exists, but there is no data file in it
         if(dir.exists()) {
-            String datafilepath = datapath+ "/tessdata/eng.traineddata";
+            String datafilepath = datapath+ "/tessdata/" + language + ".traineddata";
             File datafile = new File(datafilepath);
             if (!datafile.exists()) {
-                copyFilesTrainedData();
+                copyFilesTrainedData(language);
             }
         }
     }
