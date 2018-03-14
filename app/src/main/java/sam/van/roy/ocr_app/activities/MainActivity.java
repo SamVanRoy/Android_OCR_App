@@ -1,4 +1,4 @@
-package sam.van.roy.ocr_app;
+package sam.van.roy.ocr_app.activities;
 
 import android.Manifest;
 import android.app.Activity;
@@ -7,106 +7,52 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.system.ErrnoException;
-import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.googlecode.tesseract.android.TessBaseAPI;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import sam.van.roy.ocr_app.PhotoOptions;
+import sam.van.roy.ocr_app.R;
 
 public class MainActivity extends AppCompatActivity {
-    Bitmap image; //our image
-    private TessBaseAPI mTess; //Tess API reference
-    String datapath = ""; //path to folder containing language data file
+//    Bitmap image; //our image
 
-    String mCurrentPhotoPath;
-    static final int REQUEST_TAKE_PHOTO = 1;
-
-    Button ocrBtn;
-
-    private CropImageView mCropImageView;
-
-    private TextView ocrResultTextView;
-
+//    String mCurrentPhotoPath;
+//    static final int REQUEST_TAKE_PHOTO = 1;
     private Uri mCropImageUri;
 
-    private ShareActionProvider mShareActionProvider;
-    private String OCRresultText = null;
-    private String ocrLanguage = "eng";
+    public static final String CROPIMAGEURI = "roy.van.sam.ocr_app.CROPIMAGEURI";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        datapath = getFilesDir()+ "/tesseract/";
-
-        //make sure training data has been copied
-        checkFile(new File(datapath + "tessdata/"), ocrLanguage);
-
-        initTesseractApi(ocrLanguage);
-
-
-        //Todo
-        mCropImageView = (CropImageView) findViewById(R.id.CropImageView);
-
-        ocrResultTextView = findViewById(R.id.ocrResultTextView);
-        ocrResultTextView.setMovementMethod(new ScrollingMovementMethod());
-
-        ocrBtn = findViewById(R.id.ocr_btn);
-        ocrBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                processImage(view);
-                LinearLayout.LayoutParams loparams = (LinearLayout.LayoutParams) ocrResultTextView.getLayoutParams();
-                loparams.weight = 2;
-                ocrResultTextView.setLayoutParams(loparams);
-
-                LinearLayout.LayoutParams loparams2 = (LinearLayout.LayoutParams) mCropImageView.getLayoutParams();
-                loparams2.weight = 1;
-                mCropImageView.setLayoutParams(loparams2);
-            }
-        });
-    }
-
-    private void initTesseractApi(String language) {
-        //initialize Tesseract API
-//        String lang = "eng";
-        mTess = new TessBaseAPI();
-        mTess.init(datapath, language);
     }
 
     @Override
@@ -114,28 +60,21 @@ public class MainActivity extends AppCompatActivity {
         // Inflate menu resource file.
         getMenuInflater().inflate(R.menu.toolbar_options, menu);
 
-        // Locate MenuItem with ShareActionProvider
-        MenuItem item = menu.findItem(R.id.menu_item_share);
-
-        // Fetch and store ShareActionProvider
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-
-
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, OCRresultText);
-        shareIntent.setType("text/plain");
-
-        setShareIntent(shareIntent);
-
         // Return true to display menu
         return true;
     }
 
-    // Call to update the share intent
-    private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.menu_item_camera:
+                startActivityForResult(getPickImageChooserIntent(PhotoOptions.CAMERA), 200);
+                return true;
+            case R.id.menu_item_photogallery:
+                startActivityForResult(getPickImageChooserIntent(PhotoOptions.GALLERY), 200);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -148,19 +87,9 @@ public class MainActivity extends AppCompatActivity {
     /**
      * On load image button click, start pick image chooser activity.
      */
-    public void onLoadImageClick(View view) {
-        startActivityForResult(getPickImageChooserIntent(), 200);
-    }
-
-    /**
-     * Crop the image and set it back to the cropping view.
-     */
-    public void onCropImageClick(View view) {
-        Bitmap cropped = mCropImageView.getCroppedImage(500, 500);
-        if (cropped != null)
-            mCropImageView.setImageBitmap(cropped);
-        image = cropped;
-    }
+//    public void onLoadImageClick(View view) {
+//        //startActivityForResult(getPickImageChooserIntent(), 200);
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -181,7 +110,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (!requirePermissions) {
-                mCropImageView.setImageUriAsync(imageUri);
+                mCropImageUri = imageUri;
+                goToCropImageActivity();
+//                mCropImageView.setImageUriAsync(imageUri);
             }
         }
     }
@@ -189,10 +120,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if (mCropImageUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            mCropImageView.setImageUriAsync(mCropImageUri);
+            goToCropImageActivity();
+//            mCropImageView.setImageUriAsync(mCropImageUri);
         } else {
             Toast.makeText(this, "Required permissions are not granted", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void goToCropImageActivity(){
+        Intent cropImageIntent = new Intent(this, CropImageActivity.class);
+        cropImageIntent.putExtra(MainActivity.CROPIMAGEURI, mCropImageUri.toString());
+        startActivity(cropImageIntent);
     }
 
     /**
@@ -200,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
      * The source can be camera's (ACTION_IMAGE_CAPTURE) or gallery's (ACTION_GET_CONTENT).<br/>
      * All possible sources are added to the intent chooser.
      */
-    public Intent getPickImageChooserIntent() {
+    private Intent getPickImageChooserIntent(PhotoOptions photoOption) {
 
         // Determine Uri of camera image to save.
         Uri outputFileUri = getCaptureImageOutputUri();
@@ -208,28 +146,13 @@ public class MainActivity extends AppCompatActivity {
         List<Intent> allIntents = new ArrayList<>();
         PackageManager packageManager = getPackageManager();
 
-        // collect all camera intents
-        Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-        for (ResolveInfo res : listCam) {
-            Intent intent = new Intent(captureIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(res.activityInfo.packageName);
-            if (outputFileUri != null) {
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-            }
-            allIntents.add(intent);
-        }
-
-        // collect all gallery intents
-        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        galleryIntent.setType("image/*");
-        List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
-        for (ResolveInfo res : listGallery) {
-            Intent intent = new Intent(galleryIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(res.activityInfo.packageName);
-            allIntents.add(intent);
+        switch (photoOption){
+            case CAMERA:
+                getAllCameraIntents(allIntents, packageManager, outputFileUri);
+                break;
+            case GALLERY:
+                getAllGalleryIntents(allIntents, packageManager, outputFileUri);
+                break;
         }
 
         // the main intent is the last in the list (fucking android) so pickup the useless one
@@ -251,6 +174,34 @@ public class MainActivity extends AppCompatActivity {
         return chooserIntent;
     }
 
+    private void getAllCameraIntents(List<Intent> allIntents, PackageManager packageManager, Uri outputFileUri){
+        // collect all camera intents
+        Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+        for (ResolveInfo res : listCam) {
+            Intent intent = new Intent(captureIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(res.activityInfo.packageName);
+            if (outputFileUri != null) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            }
+            allIntents.add(intent);
+        }
+    }
+
+    private void getAllGalleryIntents(List<Intent> allIntents, PackageManager packageManager, Uri outputFileUri){
+        // collect all gallery intents
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+        List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
+        for (ResolveInfo res : listGallery) {
+            Intent intent = new Intent(galleryIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(res.activityInfo.packageName);
+            allIntents.add(intent);
+        }
+    }
+
     /**
      * Get URI to image received from capture by camera.
      */
@@ -264,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Get the URI of the selected image from {@link #getPickImageChooserIntent()}.<br/>
+     * Get the URI of the selected image from {@link #getPickImageChooserIntent(PhotoOptions)}.<br/>
      * Will return the correct URI for camera and gallery image.
      *
      * @param data the returned data of the activity result
@@ -296,34 +247,25 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        setPictureInPlace();
-//    }
 
-//    private void setPictureInPlace() {
-//        //is dit nodig?
-//        assignBitmapWithGlide(mCurrentPhotoPath);
-//
-//        Glide.with(this).asBitmap().load(mCurrentPhotoPath).into(mImageView);
-//    }
-
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
+    public void setUpToolbar(){
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.appToolbar);
+        setSupportActionBar(myToolbar);
     }
+
+    //om taal van app aan te passen.
+    public void setLocale(String lang) {
+        Locale myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
+        Intent refresh = new Intent(this, MainActivity.class);
+        startActivity(refresh);
+    }
+}
+
 
 //    private void dispatchTakePictureIntent() {
 //        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -347,61 +289,9 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //    }
 
-    //Tesseract
-    private void copyFilesTrainedData(String language) {
-        try {
-            //location we want the file to be at
-            String filepath = datapath + "/tessdata/" + language + ".traineddata";
 
-            //get access to AssetManager
-            AssetManager assetManager = getAssets();
 
-            //open byte streams for reading/writing
-            InputStream instream = assetManager.open("tessdata/nld.traineddata");
-            OutputStream outstream = new FileOutputStream(filepath);
-
-            //copy the file to the location specified by filepath
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = instream.read(buffer)) != -1) {
-                outstream.write(buffer, 0, read);
-            }
-            outstream.flush();
-            outstream.close();
-            instream.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //Tesseract
-    private void checkFile(File dir, String language) {
-        //directory does not exist, but we can successfully create it
-        if (!dir.exists()&& dir.mkdirs()){
-            copyFilesTrainedData(language);
-        }
-        //The directory exists, but there is no data file in it
-        if(dir.exists()) {
-            String datafilepath = datapath+ "/tessdata/" + language + ".traineddata";
-            File datafile = new File(datafilepath);
-            if (!datafile.exists()) {
-                copyFilesTrainedData(language);
-            }
-        }
-    }
-
-    //Tesseract
-    public void processImage(View view){
-        mTess.setImage(image);
-        OCRresultText = mTess.getUTF8Text();
-        TextView OCRTextView = (TextView) findViewById(R.id.ocrResultTextView);
-        OCRTextView.setText(OCRresultText);
-    }
-
-    //utilityMethod with Glide
+//utilityMethod with Glide
 //    private void assignBitmapWithGlide(String location) {
 //        Glide
 //                .with(getApplicationContext())
@@ -416,10 +306,32 @@ public class MainActivity extends AppCompatActivity {
 //                });
 //    }
 
-    public void setUpToolbar(){
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.appToolbar);
-        setSupportActionBar(myToolbar);
-    }
+//    private File createImageFile() throws IOException {
+//        // Create an image file name
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//        String imageFileName = "JPEG_" + timeStamp + "_";
+//        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//        File image = File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".jpg",         /* suffix */
+//                storageDir      /* directory */
+//        );
+//
+//        // Save a file: path for use with ACTION_VIEW intents
+//        mCurrentPhotoPath = image.getAbsolutePath();
+//        return image;
+//    }
 
 
-}
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        setPictureInPlace();
+//    }
+
+//    private void setPictureInPlace() {
+//        //is dit nodig?
+//        assignBitmapWithGlide(mCurrentPhotoPath);
+//
+//        Glide.with(this).asBitmap().load(mCurrentPhotoPath).into(mImageView);
+//    }
+
