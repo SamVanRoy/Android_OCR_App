@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="sam.van.roy.ocr_app.activities.OcrResultActivity">
+    tools:context="sam.van.roy.ocr_app.activities.OcrResultActivity"
+    >
 
-</android.support.constraint.ConstraintLayout>
+    <include
+        android:id="@+id/appToolbarLayout"
+        layout="@layout/appbar_layout"/>
+
+    <EditText
+        android:id="@+id/ocrResultTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="500"
+        android:scrollbars="vertical"
+        android:text="@string/ocr_result_text"
+        android:layout_below="@id/appToolbarLayout"
+        />
+
+</android.widget.RelativeLayout>

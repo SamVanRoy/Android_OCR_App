@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="sam.van.roy.ocr_app.activities.MainActivity">
+    <item
+        android:id="@+id/menu_item_camera"
+        android:icon="@drawable/ic_action_camera"
+        android:title="Camera"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/menu_item_photogallery"
+        android:icon="@drawable/ic_action_photogallery"
+        android:title="Photogallery"
+        app:showAsAction="ifRoom"
+        />
+    />
+</menu>

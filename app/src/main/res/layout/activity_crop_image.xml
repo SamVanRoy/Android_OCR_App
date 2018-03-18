@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,37 +11,35 @@
         layout="@layout/appbar_layout"/>
 
     <LinearLayout
-        android:id="@+id/ocr_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/appToolbarLayout"
+        android:weightSum="2"
         android:orientation="vertical"
-        android:weightSum="4">
+        android:layout_below="@+id/appToolbarLayout"
+        >
 
         <LinearLayout
-            android:id="@+id/cropImageContainer"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2">
+            android:orientation="vertical"
+            android:layout_weight="1.75"
+            >
 
             <com.theartofdev.edmodo.cropper.CropImageView
                 android:id="@+id/CropImageView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                />
 
         </LinearLayout>
-
-        <!--<TextView-->
-            <!--android:id="@+id/ocrResultTextView"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="0dp"-->
-            <!--android:layout_weight="2"-->
-            <!--android:maxLines="500"-->
-            <!--android:scrollbars="vertical"-->
-            <!--android:text="@string/ocr_result_text"-->
-            <!--android:visibility="gone" />-->
+        <ImageButton
+            android:id="@+id/ocrBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.25"
+            android:layout_gravity="end"
+            android:contentDescription="Go to next screen"
+            android:src="@drawable/ic_action_arrow_forward"/>
 
     </LinearLayout>
-
-
-</android.widget.LinearLayout>
+</android.widget.RelativeLayout>

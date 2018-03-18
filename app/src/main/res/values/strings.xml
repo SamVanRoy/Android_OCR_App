@@ -4,4 +4,6 @@
     <string name="load_btn_txt">Load Image</string>
     <string name="crop_btn_txt">Crop Image</string>
     <string name="ocr_btn_txt">Run OCR</string>
+    <string name="load_dialog_title">Getting your text from image</string>
+    <string name="waiting_message">waiting_message</string>
 </resources>
