@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
      * The source can be camera's (ACTION_IMAGE_CAPTURE) or gallery's (ACTION_GET_CONTENT).<br/>
      * All possible sources are added to the intent chooser.
      */
-    private Intent getPickImageChooserIntent(PhotoOptions photoOption) {
+    public Intent getPickImageChooserIntent(PhotoOptions photoOption) {
 
         // Determine Uri of camera image to save.
         Uri outputFileUri = getCaptureImageOutputUri();
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         return chooserIntent;
     }
 
-    private void getAllCameraIntents(List<Intent> allIntents, PackageManager packageManager, Uri outputFileUri){
+    public void getAllCameraIntents(List<Intent> allIntents, PackageManager packageManager, Uri outputFileUri){
         // collect all camera intents
         Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Get URI to image received from capture by camera.
      */
-    private Uri getCaptureImageOutputUri() {
+    public Uri getCaptureImageOutputUri() {
         Uri outputFileUri = null;
         File getImage = getExternalCacheDir();
         if (getImage != null) {
