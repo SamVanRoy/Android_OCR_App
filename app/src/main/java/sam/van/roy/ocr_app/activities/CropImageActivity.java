@@ -59,13 +59,13 @@ public class CropImageActivity extends AppCompatActivity {
 
         if(mCropImageUri != null){
             mCropImageView.setImageUriAsync(mCropImageUri);
-            image = mCropImageView.getCroppedImage();
         }
 
         ocrButton = findViewById(R.id.ocrBtn);
         ocrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                image = mCropImageView.getCroppedImage();
 //                AlertDialog alertDialog = Helper.showLoadingDialog(CropImageActivity.this);
                 String OCRresultText = processImage();
 //                Helper.dismissLoadingDialog(alertDialog);
