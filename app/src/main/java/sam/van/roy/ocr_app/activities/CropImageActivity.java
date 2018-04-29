@@ -4,14 +4,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Parcelable;
 import android.provider.MediaStore;
@@ -19,7 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.system.ErrnoException;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
@@ -42,7 +38,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import sam.van.roy.ocr_app.Helper;
 import sam.van.roy.ocr_app.PhotoOptions;
 import sam.van.roy.ocr_app.R;
 
@@ -116,9 +111,8 @@ public class CropImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 image = mCropImageView.getCroppedImage();
-//                AlertDialog alertDialog = Helper.showLoadingDialog(CropImageActivity.this);
+
                 String OCRresultText = processImage();
-//                Helper.dismissLoadingDialog(alertDialog);
 
                 Intent ocrIntent = new Intent(getApplication(), OcrResultActivity.class);
                 ocrIntent.putExtra("ocrResultText", OCRresultText);
@@ -130,9 +124,9 @@ public class CropImageActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
-            case R.id.menu_item_crop:
-                onCropImageClick();
-                return true;
+//            case R.id.menu_item_crop:
+//                onCropImageClick();
+//                return true;
             case R.id.menu_item_camera:
                 startActivityForResult(getPickImageChooserIntent(PhotoOptions.CAMERA), 200);
                 return true;
@@ -153,7 +147,7 @@ public class CropImageActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate menu resource file.
-        getMenuInflater().inflate(R.menu.crop_menu, menu);
+//        getMenuInflater().inflate(R.menu.crop_menu, menu);
         getMenuInflater().inflate(R.menu.photo_menu, menu);
 
         // Return true to display menu
@@ -169,7 +163,7 @@ public class CropImageActivity extends AppCompatActivity {
      * Crop the image and set it back to the cropping view.
      */
     public void onCropImageClick() {
-        Bitmap cropped = mCropImageView.getCroppedImage(500, 500);
+        Bitmap cropped = mCropImageView.getCroppedImage(300, 300);
 //        Bitmap cropped = mCropImageView.getCroppedImage();
         if (cropped != null)
             mCropImageView.setImageBitmap(cropped);
