@@ -14,20 +14,21 @@ First you need to add the dependency for the Tesseract fork. In your app module 
 3.	Adding traineddata file
 
 The OCR technology uses a file for trying to recognize the text in your images. This is called a traineddata file. You can get such a traineddata file from the Github repository of tesseract.
-Our fork of the tesseract repository, rmtheis, uses tesseract version 3.* . 
-You can get the traineddata files for this version from this link : https://github.com/tesseract-ocr/tessdata/tree/3.04.00. This is only for Tesseract version 3.* . If you want to experiment with the newer tesseract version ( 4.* ), you can get the traineddata files from this link : https://github.com/tesseract-ocr/tessdata.
-In my repository I used the traineddata files for English and Dutch. 
-If you want to try out other languages, you can find the languages and their abbreviation from this link : https://github.com/tesseract-ocr/tesseract/wiki/Data-Files
-Once you’ve downloaded the traineddata file you want, you need to make an Android Resource directory named assets in your android project. In the newly created assets folder, you need to create a regular directory named “tessdata” where you can place your traineddata files. The folder structure needs to be right because Tesseract wil look in this specific folder structure for the traineddata files.
-Your project structure should look something like this:
- 
 
+Our fork of the tesseract repository, rmtheis, uses tesseract version 3.* . 
+
+You can get the traineddata files for this version from this link : https://github.com/tesseract-ocr/tessdata/tree/3.04.00. This is only for Tesseract version 3.* . If you want to experiment with the newer tesseract version ( 4.* ), you can get the traineddata files from this link : https://github.com/tesseract-ocr/tessdata.
+
+In my repository I used the traineddata files for English and Dutch. If you want to try out other languages, you can find the languages and their abbreviation from this link : https://github.com/tesseract-ocr/tesseract/wiki/Data-Files
+
+Once you’ve downloaded the traineddata file you want, you need to make an Android Resource directory named assets in your android project. In the newly created assets folder, you need to create a regular directory named “tessdata” where you can place your traineddata files. The folder structure needs to be right because Tesseract wil look in this specific folder structure for the traineddata files.
 
 4.	Get a test image
 
 For the tutorial we’ll use a test image from the internet to test the application.
 Grab an image with text from the internet, download and save this image as "test_image.png" and stick it in the res/drawable/ folder.
-* Note: If you'd like to allow the user to choose or take their own photo, take a look at my project.
+
+*Note: If you'd like to allow the user to choose or take their own photo, take a look at my project.
 
 5.	Design the Activity
 
@@ -108,6 +109,7 @@ android:weightSum="1">
 
 We're ready to start coding the activity code, so let's open MainActivity.java for editing. There should already be some example code in there, such as an onCreate() method. 
 onCreate() is generally used to initialize things needed for the activity, so we'll deal with that first. We need to initialize the Tess-Two API for use, as well as grab the test image from our assets like so:
+
 Bitmap image; //our image
 private TessBaseAPI mTess; //Tess API reference
 String datapath = ""; //path to folder containing language data file
@@ -136,7 +138,9 @@ Tesseract's API is accessed with a TessBaseAPI object. On init(), it uses the su
 7.	Copy Training Data to Device
 
 We need to do a little extra to get a proper value for datapath because of the way Android handles assets. At runtime, assets may only be accessed with raw byte streams via an AssetManager, meaning files in our asset folder are not accessible by filepath. To get around this, we need to copy the language data file into the device's internal or external storage at runtime, and then use that path to initialize Tesseract.
+
 First, let's define a method that allows us to copy the file to the device:
+
 private void copyFiles() {
     try {
         //location we want the file to be at
@@ -168,6 +172,7 @@ private void copyFiles() {
 
 Let's also create a simple method that checks whether the file is already on the device in the expected location, and calls copyFile() if it isn't. 
 This checkFile() method covers the two scenarios in which we should copy the file over:
+
 private void checkFile(File dir) {
         //directory does not exist, but we can successfully create it
         if (!dir.exists()&& dir.mkdirs()){
@@ -186,7 +191,9 @@ private void checkFile(File dir) {
     
 
 This method accepts a File variable dir and checks to see if it exists. If it doesn't, we try to create it with mkdirs(), and if that's successful, we call copyFiles(). If it does exist, we check to see if the language file is where we expect it to be, and if not, we call copyFiles().
+
 Now let's rearrange our initialization method, onCreate(), to call checkFile() before initializing Tesseract. Our new onCreate() method now looks like this:
+
 @Override
 protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);                                      
@@ -212,6 +219,7 @@ protected void onCreate(Bundle savedInstanceState) {
 7. Process an Image
 
 We are finally ready to actually use the API to do OCR! Our clickable areas (OCRButtonContainer and OCRbutton) both are set to fire the method processImage() when clicked, so let's define that:
+
 public void processImage(View view){
     String OCRresult = null;
     mTess.setImage(image);
@@ -222,6 +230,7 @@ public void processImage(View view){
 
 This method sets the image we want the API to work with via setImage(), runs the OCR on the image with getUTF8Text(), and then puts the results in a string called OCRresult. It then finds the TextView component OCRTextView, and sets its text to our result via setText().
 The MainActivity.java file should look like something like this in the end:
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
