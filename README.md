@@ -339,8 +339,13 @@ Congratulations, you've made your own simple OCR application!
 You’ll notice that the results aren’t always perfect. If you want to improve the results, you can train your own files. Here is a good place to start for that : https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract.
 
 Resources:
+
 http://imperialsoup.com:80/2016/04/29/simple-ocr-android-app-using-tesseract-tutorial
+
 https://github.com/imperialsoup/SimpleTesseractExample
+
 https://developer.android.com/guide/
+
 https://github.com/tesseract-ocr/tesseract
+
 https://github.com/rmtheis/tess-two
