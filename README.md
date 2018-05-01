@@ -4,26 +4,33 @@ Hello, I’m Sam and in this guide, I’m going to quickly go over the basic stu
 This project is made with Android studio version 3.0.1.
 
 1.	Create a New Android Project
+
 Open Android Studio and create a new Project and add an empty activity.
 
 2.	Add tess-two as an external dependency
+
 First you need to add the dependency for the Tesseract fork. In your app module file (build.gradle) you need to add “compile 'com.rmtheis:tess-two:8.0.0'” to your dependencies. Once you’ve added that we can start to use the library. 
 
 3.	Adding traineddata file
+
 The OCR technology uses a file for trying to recognize the text in your images. This is called a traineddata file. You can get such a traineddata file from the Github repository of tesseract.
-Our fork of the tesseract repository, rmtheis, uses tesseract version 3.*. You can get the traineddata files for this version from this link : https://github.com/tesseract-ocr/tessdata/tree/3.04.00. This is only for Tesseract version 3.*. If you want to experiment with the newer tesseract version (4.*), you can get the traineddata files from this link : https://github.com/tesseract-ocr/tessdata.
-In my repository I used the traineddata files for English and Dutch. If you want to try out other languages, you can find the languages and their abbreviation from this link : https://github.com/tesseract-ocr/tesseract/wiki/Data-Files
+Our fork of the tesseract repository, rmtheis, uses tesseract version 3.* . 
+You can get the traineddata files for this version from this link : https://github.com/tesseract-ocr/tessdata/tree/3.04.00. This is only for Tesseract version 3.* . If you want to experiment with the newer tesseract version ( 4.* ), you can get the traineddata files from this link : https://github.com/tesseract-ocr/tessdata.
+In my repository I used the traineddata files for English and Dutch. 
+If you want to try out other languages, you can find the languages and their abbreviation from this link : https://github.com/tesseract-ocr/tesseract/wiki/Data-Files
 Once you’ve downloaded the traineddata file you want, you need to make an Android Resource directory named assets in your android project. In the newly created assets folder, you need to create a regular directory named “tessdata” where you can place your traineddata files. The folder structure needs to be right because Tesseract wil look in this specific folder structure for the traineddata files.
 Your project structure should look something like this:
  
 
 
 4.	Get a test image
+
 For the tutorial we’ll use a test image from the internet to test the application.
 Grab an image with text from the internet, download and save this image as "test_image.png" and stick it in the res/drawable/ folder.
 * Note: If you'd like to allow the user to choose or take their own photo, take a look at my project.
 
 5.	Design the Activity
+
 Open activity_main.xml for editing. Using the design/text view, we’ll create a simple design. The important components to have in it are:
 •	An ImageView, to hold our sample image.
 •	A TextView, to hold the OCR-ed text
@@ -98,6 +105,7 @@ android:weightSum="1">
 
  
 6.	Initialize Activity Variables
+
 We're ready to start coding the activity code, so let's open MainActivity.java for editing. There should already be some example code in there, such as an onCreate() method. 
 onCreate() is generally used to initialize things needed for the activity, so we'll deal with that first. We need to initialize the Tess-Two API for use, as well as grab the test image from our assets like so:
 Bitmap image; //our image
@@ -126,6 +134,7 @@ Tesseract's API is accessed with a TessBaseAPI object. On init(), it uses the su
   •	datapath is initialized by obtaining the absolute path to the directory on the device'sfilesystem via getFilesDir(), and adding '/tesseract/' to the end of the result.
 
 7.	Copy Training Data to Device
+
 We need to do a little extra to get a proper value for datapath because of the way Android handles assets. At runtime, assets may only be accessed with raw byte streams via an AssetManager, meaning files in our asset folder are not accessible by filepath. To get around this, we need to copy the language data file into the device's internal or external storage at runtime, and then use that path to initialize Tesseract.
 First, let's define a method that allows us to copy the file to the device:
 private void copyFiles() {
@@ -201,6 +210,7 @@ protected void onCreate(Bundle savedInstanceState) {
 * Note: On initialization, Tesseract checks the given datapath for a directory called tessdata, and then checks to see if there is a data file inside it. Make sure to supply a path to tessdata's parentfolder, i.e. Whatever/path/tesseract/ instead of Whatever/path/tesseract/tessdata/, or the check will fail.
 
 7. Process an Image
+
 We are finally ready to actually use the API to do OCR! Our clickable areas (OCRButtonContainer and OCRbutton) both are set to fire the method processImage() when clicked, so let's define that:
 public void processImage(View view){
     String OCRresult = null;
@@ -312,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
 
  
 8.	Run your app!
+
 Now if you run your app in an emulator or device, you should be able to see your results in the text area after clicking the 'Run OCR' button. 
 Congratulations, you've made your own simple OCR application!
 You’ll notice that the results aren’t always perfect. If you want to improve the results, you can train your own files. Here is a good place to start for that : https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract.
