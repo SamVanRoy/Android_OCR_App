@@ -132,8 +132,10 @@ protected void onCreate(Bundle savedInstanceState) {
 Here we've declared three new class variables, image, mTess, and datapath.
   •	image is initialized by using BitmapFactory.decodeResources() to get and decode the resource R.drawable.test_ image into a bitmap.
 Tesseract's API is accessed with a TessBaseAPI object. On init(), it uses the supplied datapath and checks for a child directory named 'tessdata', and then checks to see if 'tessdata' contains a language data file.
+  
   •	mTess is initialized with a call to init(datapath, lang), where datapath is the path to the parent folder of the folder containing the language file, and lang is the file's language (in this case, the parent folder is "tesseract" and the language is "eng" for english).
-  •	datapath is initialized by obtaining the absolute path to the directory on the device'sfilesystem via getFilesDir(), and adding '/tesseract/' to the end of the result.
+ 
+ •	datapath is initialized by obtaining the absolute path to the directory on the device'sfilesystem via getFilesDir(), and adding '/tesseract/' to the end of the result.
 
 7.	Copy Training Data to Device
 
