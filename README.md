@@ -1,4 +1,5 @@
 Guide
+
 Hello, I’m Sam and in this guide, I’m going to quickly go over the basic stuff for setting up an OCR (optical character reading) app with android. For the OCR part we’ll use a fork of the tesseract OCR technology called rmtheis (https://github.com/rmtheis/tess-two).
 This project is made with Android studio version 3.0.1.
 
